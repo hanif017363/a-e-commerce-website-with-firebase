@@ -29,8 +29,8 @@ function NavBar() {
 
   return (
     <div>
-      <div className="nav">
-        <ul>
+      <div className="nav my-5">
+        <ul className="flex justify-evenly font-bold">
           <NavLink to={"/"}>Home</NavLink>
 
           <li>

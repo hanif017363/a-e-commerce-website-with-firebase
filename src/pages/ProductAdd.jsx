@@ -11,6 +11,7 @@ function ProductAdd() {
     category: "",
     image: "",
   });
+  const [error, setError] = useState("");
   const handleChange = (e) => {
     setProduct({
       ...product,
@@ -21,6 +22,16 @@ function ProductAdd() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !product.title ||
+      !product.price ||
+      !product.category ||
+      !product.image
+    ) {
+      setError("All fields are required!");
+      return;
+    }
+
     try {
       await addDoc(collection(db, "products"), product);
       navigate("/shop");
@@ -28,10 +39,32 @@ function ProductAdd() {
       console.error("Error adding document: ", error);
     }
   };
-
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "our-first-project");
+    data.append("cloud_name", "dl3d8y9fw");
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/dl3d8y9fw/image/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const result = await res.json();
+      setProduct({ ...product, image: result.secure_url });
+      setError(""); // Clear error if image uploads successfully
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      setError("Image upload failed. Try again!");
+    }
+  };
   return (
     <div>
       <h1>Add Product</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -54,12 +87,20 @@ function ProductAdd() {
           value={product.category}
           onChange={handleChange}
         />
-        <input
+        {/* <input
           type="text"
           name="image"
           placeholder="Image URL"
           value={product.image}
           onChange={handleChange}
+        /> */}
+
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={handleImageChange}
+          required
         />
         <button type="submit">Add Product</button>
       </form>

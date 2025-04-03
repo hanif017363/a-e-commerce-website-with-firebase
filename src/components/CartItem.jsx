@@ -8,7 +8,7 @@ function CartItem({ item }) {
   const dispatch = useDispatch();
 
   return (
-    <div>
+    <>
       <tr>
         <td>
           <div className="product">
@@ -42,7 +42,7 @@ function CartItem({ item }) {
               <figure>-</figure>
             </button>
             <input
-              className="product-qty"
+              className=" bg-red-600 border-2 border-gray-300 rounded p-2"
               type="number"
               name="product-qty"
               value={itemQuantity}
@@ -86,7 +86,7 @@ function CartItem({ item }) {
           </button>
         </td>
       </tr>
-    </div>
+    </>
   );
 }
 

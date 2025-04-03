@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const navigate = useNavigate();
@@ -22,10 +23,11 @@ function Login() {
         enteredPassword
       );
       if (res.user) {
-        setLoading(false);
-        setError("");
-        navigate("/");
+        toast.success("User Logged in succesfully");
       }
+      setLoading(false);
+      setError("");
+      navigate("/");
     } catch (error) {
       console.error("Login error:", error);
       setLoading(false);
