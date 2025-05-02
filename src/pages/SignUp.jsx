@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 const SignUp = () => {
   const [user, setUser] = useState({
+    username: "",
     email: "",
     password: "",
   });
@@ -20,14 +21,15 @@ const SignUp = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log("Auth object:", auth); // Debug line
       await createUserWithEmailAndPassword(auth, user.email, user.password);
       await setDoc(doc(db, "users", user.email), {
+        username: user.username,
         email: user.email,
         password: user.password,
       });
 
       await setDoc(doc(db, "users", auth.currentUser.uid), {
+        username: user.username,
         email: user.email,
         role: "user",
       });
@@ -47,15 +49,28 @@ const SignUp = () => {
           <h1>Please Register</h1>
           <form onSubmit={submitHandler}>
             <div>
-              <label htmlFor="email">Your Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={user.email}
-                onChange={handleChange}
-                required
-              />
+              <div>
+                <label htmlFor="username">Your Name</label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={user.username}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email">Your Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={user.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
               <div>
                 <label htmlFor="password">Your Password</label>
                 <input

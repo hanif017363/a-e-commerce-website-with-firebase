@@ -61,6 +61,7 @@ function ProductAdd() {
       setError("Image upload failed. Try again!");
     }
   };
+
   return (
     <div>
       <h1>Add Product</h1>
@@ -107,9 +108,19 @@ function ProductAdd() {
       <div className="product-add">
         <h2>Product Details</h2>
         <p>Title: {product.title}</p>
-        <p>Price: {product.price}</p>
+        <p>Price: {product.price ? `$${product.price}` : ""}</p>
         <p>Category: {product.category}</p>
-        {product.image && <img src={product.image} alt={product.title} />}
+
+        <br />
+        {product.image ? (
+          <img src={product.image} alt={product.title} />
+        ) : (
+          <p className="font-bold text-yellow-300">
+            Uploading Preview Please Wait...
+            <br />
+            This may take a few seconds depending on the size of the image.
+          </p>
+        )}
       </div>
     </div>
   );

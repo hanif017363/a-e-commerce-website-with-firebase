@@ -9,6 +9,10 @@ import SignUp from "../pages/SignUp";
 import Cart from "../pages/Cart";
 import ProductAdd from "../pages/ProductAdd";
 import PrivateAdminRoute from "../components/PrivateAdminRoute";
+import AllProduct from "../pages/AllProduct";
+import UserData from "../pages/UserData";
+import PrivateRoute from "../components/PrivateRoute";
+import CheckOut from "../pages/CheckOut";
 
 export const router = createBrowserRouter([
   {
@@ -20,12 +24,15 @@ export const router = createBrowserRouter([
         element: <SignUp />,
       },
       {
-        index: true,
-        path: "/",
+        index: true, // ✅ No need to specify path: "/"
         element: <Home />,
       },
       { path: "/app", element: <App /> },
       { path: "/cart", element: <Cart /> },
+      { path: "/shop", element: <Shop /> },
+      { path: "/login", element: <Login /> },
+
+      // ✅ Admin-protected routes separately
       {
         path: "/addproduct",
         element: (
@@ -34,9 +41,30 @@ export const router = createBrowserRouter([
           </PrivateAdminRoute>
         ),
       },
-      { path: "/shop", element: <Shop /> },
-
-      { path: "/login", element: <Login /> },
+      {
+        path: "/allproducts",
+        element: (
+          <PrivateAdminRoute>
+            <AllProduct />
+          </PrivateAdminRoute>
+        ),
+      },
+      {
+        path: "/allUser",
+        element: (
+          <PrivateAdminRoute>
+            <UserData />
+          </PrivateAdminRoute>
+        ),
+      },
+      {
+        path: "/checkout",
+        element: (
+          <PrivateRoute>
+            <CheckOut />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 

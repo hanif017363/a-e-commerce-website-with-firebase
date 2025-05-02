@@ -1,26 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { useGetAllProductsQuery } from "../features/api/apiSlice";
 import ProductCard from "../components/ProductCard";
 
 function Shop() {
-  const [products, setProducts] = useState([]);
-  const productsCollectionRef = collection(db, "products");
-
-  useEffect(() => {
-    const getProducts = async () => {
-      const data = await getDocs(productsCollectionRef);
-      const filteredData = data.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setProducts(filteredData);
-    };
-    getProducts();
-  }, []);
-
+  const { data: products } = useGetAllProductsQuery();
+  console.log(products);
   return (
-    <div>
+    <>
       <div className="page-banner">
         <div className="page-banner__details">
           <div className="page-banner__details__title">
@@ -35,7 +20,7 @@ function Shop() {
               <h2>All Products</h2>
             </div>
           </div>
-          {products.length > 0 && (
+          {products?.length > 0 ? (
             <div className="section__content">
               <div className="grid three">
                 {products?.map((product) => (
@@ -43,10 +28,16 @@ function Shop() {
                 ))}
               </div>
             </div>
+          ) : (
+            <div className="section__content">
+              <div className="grid three">
+                <h2>No products found OoO.</h2>
+              </div>
+            </div>
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

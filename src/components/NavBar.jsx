@@ -1,31 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContxt";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { doc } from "firebase/firestore";
-import { getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 function NavBar() {
   const { userLoggedIn, currentUser } = useAuth();
-  let [role, setRole] = useState("user");
+  const navigate = useNavigate();
+  const [role, setRole] = useState("user");
+  const [username, setUsername] = useState("");
+
   useEffect(() => {
     if (userLoggedIn) {
       const getCurrentUserRole = async () => {
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          const roleDb = docSnap.data().role;
-          setRole(roleDb);
-          console.log(roleDb);
+          const data = docSnap.data();
+          setRole(data.role);
+          setUsername(data.username || "");
         } else {
-          console.log("No such document!");
           setRole("user");
         }
       };
       getCurrentUserRole();
+    } else {
+      setRole("user");
     }
   }, [userLoggedIn, currentUser]);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setRole("user");
+    navigate("/");
+    setUsername("");
+  };
 
   return (
     <div>
@@ -39,11 +49,25 @@ function NavBar() {
           <li>
             <NavLink to={"/cart"}>Cart</NavLink>
           </li>
-          {(userLoggedIn && role === "admin") || role === "super-admin" ? (
+          {userLoggedIn && (
             <li>
-              <NavLink to={"/addproduct"}>Add Product</NavLink>
+              <NavLink to={"/checkout"}>CheckOut</NavLink>
             </li>
-          ) : null}
+          )}
+
+          {userLoggedIn && (role === "admin" || role === "super-admin") && (
+            <>
+              <li>
+                <NavLink to={"/addproduct"}>Add Product</NavLink>
+              </li>
+              <li>
+                <NavLink to={"/allproducts"}>All Product</NavLink>
+              </li>
+              <li>
+                <NavLink to={"/allUser"}>All Users</NavLink>
+              </li>
+            </>
+          )}
 
           <li>
             <NavLink to={"/app"}>App</NavLink>
@@ -63,9 +87,10 @@ function NavBar() {
           {userLoggedIn && (
             <>
               <li>
-                <NavLink to={"/"} onClick={() => signOut(auth)}>
-                  Logout
-                </NavLink>
+                <p className="!text-red-600">{username}</p>
+              </li>
+              <li>
+                <button onClick={handleLogout}>Logout</button>
               </li>
             </>
           )}
